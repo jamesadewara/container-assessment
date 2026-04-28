@@ -2,7 +2,7 @@
 set -e
 
 echo "=== Creating Kind Cluster (if not exists) ==="
-sudo kind create cluster --name muchtodo || echo "Cluster already exists"
+sudo kind create cluster --name muchtodo --config kind-config.yaml || echo "Cluster already exists"
 
 echo ""
 echo "=== Loading Docker Image into Kind ==="

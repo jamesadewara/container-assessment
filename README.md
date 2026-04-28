@@ -20,6 +20,7 @@ container-assessment/
 ├── Dockerfile             # Optimized multi-stage build
 ├── docker-compose.yml     # Local dev setup with health checks
 ├── .dockerignore          # Excluded files
+├── kind-config.yaml       # Kind cluster port mapping config
 ├── kubernetes/            # K8s manifests
 │   ├── namespace.yaml     # Dedicated 'muchtodo' namespace
 │   ├── mongodb/           # MongoDB resources (PVC, Secret, ConfigMap)
@@ -55,8 +56,8 @@ The backend will wait for MongoDB and Redis to be healthy before starting.
 
 ### 1. Create Cluster and Deploy
 ```bash
-sudo chmod +x scripts/k8s-deploy.sh
-./scripts/k8s-deploy.sh
+sudo kind load docker-image muchtodo-backend:latest --name muchtodo
+sudo ./scripts/k8s-deploy.sh
 ```
 This script will:
 1. Create a Kind cluster named `muchtodo`.
@@ -68,13 +69,23 @@ This script will:
 # Check all resources in the namespace
 kubectl get all -n muchtodo
 
+# Show only Deployments
+sudo kubectl get deployments -n muchtodo
+
+# Check Pod status (to see if they are Running)
+sudo kubectl get pods -n muchtodo
+
 # Test via NodePort
 curl http://localhost:30080/health
 ```
 
-### 3. Access via Ingress (Optional)
-Add `127.0.0.1 muchtodo.local` to your `/etc/hosts` and follow Phase 2, Step 5 in the previous documentation for Nginx Ingress setup.
+### 3. Access the Application
 
+#### NodePort (Direct Access)
+The backend service is exposed on NodePort `30080`.
+```bash
+curl http://localhost:30080/health
+```
 ---
 
 ## Cleanup
