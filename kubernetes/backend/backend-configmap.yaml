@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: muchtodo
+data:
+  MONGO_HOST: "mongodb"
+  MONGO_PORT: "27017"
+  DB_NAME: "much_todo_db"
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
+  PORT: "8080"

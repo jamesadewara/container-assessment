@@ -31,4 +31,5 @@ go.work.sum
 # .idea/
 # .vscode/
 
-Server/MuchToDo/mongodb.key
+/MuchToDo/mongodb.key
+MuchToDo/mongodb.key

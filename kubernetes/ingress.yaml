@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: muchtodo-ingress
+  namespace: muchtodo
+  annotations:
+    # For Kind with nginx ingress controller
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: muchtodo.local  # You'll add this to /etc/hosts
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 8080

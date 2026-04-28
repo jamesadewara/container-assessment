@@ -1,0 +1,54 @@
+# ============================================
+# STAGE 1: Build the Go binary
+# ============================================
+# We use a specific Go version on Alpine (lightweight Linux)
+FROM golang:1.26.2-alpine AS builder
+
+# Install git and ca-certificates (needed for fetching Go modules)
+RUN apk add --no-cache git ca-certificates
+
+# Set working directory inside the container
+WORKDIR /app
+
+# Copy only dependency files first (for caching)
+COPY MuchToDo/go.mod MuchToDo/go.sum ./
+
+# Download dependencies. This layer gets cached unless go.mod/go.sum change
+RUN go mod download
+
+# Copy the rest of the application source code
+COPY MuchToDo/ .
+
+# Build the binary: static binary for Linux, no CGO
+# -ldflags="-w -s" strips debug info to make binary smaller
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o much-to-do ./cmd/api/main.go
+
+# ============================================
+# STAGE 2: Create the runtime image with shell
+# ============================================
+# Use Alpine instead of distroless so we have /bin/sh to build MONGO_URI
+FROM alpine:3.21
+
+# Set working directory
+WORKDIR /app
+
+# Copy the compiled binary from the builder stage
+COPY --from=builder /app/much-to-do .
+
+# Copy swagger docs if your app serves them
+COPY --from=builder /app/docs ./docs
+
+# Create non-root user (security best practice)
+RUN adduser -D -u 65532 appuser
+USER appuser
+
+# Expose the port your app listens on
+EXPOSE 8080
+
+# Health check: use wget since Alpine has it (distroless didn't)
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD wget -qO- http://localhost:8080/health || exit 1
+
+# Build MONGO_URI from env vars, export it, then exec the binary
+# This replaces the need for a separate entrypoint.sh file
+ENTRYPOINT ["/app/much-to-do"]
