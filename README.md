@@ -93,18 +93,3 @@ curl http://localhost:30080/health
 sudo chmod +x scripts/k8s-cleanup.sh
 ./scripts/k8s-cleanup.sh
 ```
-
-## Key Assessment Features
-- **Optimized Dockerfile**: Multi-stage, non-root user, health check, and BuildKit caching.
-- **Resilient Compose**: Dependency ordering with `service_healthy`.
-- **K8s High Availability**: Backend deployment with 2 replicas and resource limits.
-- **K8s Health Management**: Liveness and Readiness probes.
-- **Persistence**: MongoDB uses PersistentVolumeClaims for data durability.
-
-## Troubleshooting
-
-### MongoDB connection errors
-Ensure the replica set is initialized (see Step 6 above). The backend requires a replica set connection.
-
-### Health check fails
-Verify your Go app exposes `GET /health` and returns HTTP 200.
