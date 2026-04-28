@@ -1,0 +1,79 @@
+vagrant@ubuntu-focal:/home/WORKSPACE/container-assessment$ # 1. This is the most important step. It MUST be deleted.
+vagrant@ubuntu-focal:/home/WORKSPACE/container-assessment$ sudo kind delete cluster --name muchtodo
+pt (it will use the new kind-config.yaml)
+sudo ./scripts/k8s-deploy.sh
+
+# 3. Wait about 60 seconds, then check if they are ready
+sudo kubectl get pods -n muchtodo
+Deleting cluster "muchtodo" ...
+
+Deleted nodes: ["muchtodo-control-plane"]
+vagrant@ubuntu-focal:/home/WORKSPACE/container-assessment$
+vagrant@ubuntu-focal:/home/WORKSPACE/container-assessment$ # 2. Now run the deploy script (it will use the new kind-config.yaml)
+vagrant@ubuntu-focal:/home/WORKSPACE/container-assessment$ sudo ./scripts/k8s-deploy.sh
+=== Creating Kind Cluster (if not exists) ===
+Creating cluster "muchtodo" ...
+ ✓ Ensuring node image (kindest/node:v1.34.0) 🖼
+ ✓ Preparing nodes 📦
+ ✓ Writing configuration 📜
+ ✓ Starting control-plane 🕹️
+ ✓ Installing CNI 🔌
+ ✓ Installing StorageClass 💾
+Set kubectl context to "kind-muchtodo"
+You can now use your cluster with:
+
+kubectl cluster-info --context kind-muchtodo
+
+Thanks for using kind! 😊
+
+=== Loading Docker Image into Kind ===
+Image: "muchtodo-backend:latest" with ID "sha256:9a3ab0b6aabd7066e255cdd29b40e8b7cf2493db9e87995f8c0265c0ec50aa1f" not yet present on node "muchtodo-control-plane", loading...
+
+=== Deploying to Kubernetes ===
+namespace/muchtodo created
+secret/mongodb-secret created
+configmap/mongodb-config created
+\
+persistentvolumeclaim/mongodb-pvc created
+deployment.apps/mongodb created
+
+service/mongodb created
+secret/backend-secret created
+configmap/backend-config created
+deployment.apps/backend created
+service/backend created
+ingress.networking.k8s.io/muchtodo-ingress created
+
+=== Deployment Complete ===
+
+Check pods: sudo kubectl get pods -n muchtodo
+Check services: sudo kubectl get svc -n muchtodo
+Access app: http://localhost:30080 (NodePort)
+vagrant@ubuntu-focal:/home/WORKSPACE/container-assessment$
+vagrant@ubuntu-focal:/home/WORKSPACE/container-assessment$ # 3. Wait about 60 seconds, then check if they are ready
+vagrant@ubuntu-focal:/home/WORKSPACE/container-assessment$ sudo kubectl get pods -n muchtodo
+NAME                       READY   STATUS    RESTARTS   AGE
+backend-69746dd8fd-s2h8d   0/1     Pending   0          1s
+backend-69746dd8fd-wk744   0/1     Pending   0          1s
+mongodb-c9b56ff56-lvxtb    0/1     Pending   0          3s
+vagrant@ubuntu-focal:/home/WORKSPACE/container-assessment$
+vagrant@ubuntu-focal:/home/WORKSPACE/container-assessment$ \
+>
+vagrant@ubuntu-focal:/home/WORKSPACE/container-assessment$ sudo kubectl logs -l app=backend -n muchtodo --tail 20
+vagrant@ubuntu-focal:/home/WORKSPACE/container-assessment$ sudo kubectl logs -l app=backend -n muchtodo --tail 20
+vagrant@ubuntu-focal:/home/WORKSPACE/container-assessment$ sudo kubectl get pods -n muchtodo
+NAME                       READY   STATUS    RESTARTS   AGE
+backend-69746dd8fd-s2h8d   0/1     Running   0          61s
+backend-69746dd8fd-wk744   0/1     Running   0          61s
+mongodb-c9b56ff56-lvxtb    0/1     Pending   0          63s
+vagrant@ubuntu-focal:/home/WORKSPACE/container-assessment$ sudo kubectl get pods -n muchtodo
+NAME                       READY   STATUS              RESTARTS      AGE
+backend-69746dd8fd-s2h8d   0/1     CrashLoopBackOff    3 (13s ago)   2m34s
+backend-69746dd8fd-wk744   0/1     CrashLoopBackOff    3 (24s ago)   2m34s
+mongodb-c9b56ff56-lvxtb    0/1     ContainerCreating   0             2m36s
+vagrant@ubuntu-focal:/home/WORKSPACE/container-assessment$ sudo kubectl logs -l app=backend -n muchtodo --tail 20
+time=2026-04-28T20:08:14.067Z level=INFO msg="Logger initialized" level=INFO format=text
+time=2026-04-28T20:08:24.068Z level=ERROR msg="could not connect to MongoDB" error="server selection error: context deadline exceeded, current topology: { Type: ReplicaSetNoPrimary, Servers: [{ Addr: mongodb:27017, Type: Unknown, Last error: dial tcp 10.96.190.254:27017: connect: connection refused }, ] }"
+time=2026-04-28T20:08:03.072Z level=INFO msg="Logger initialized" level=INFO format=text
+time=2026-04-28T20:08:13.074Z level=ERROR msg="could not connect to MongoDB" error="server selection error: context deadline exceeded, current topology: { Type: ReplicaSetNoPrimary, Servers: [{ Addr: mongodb:27017, Type: Unknown, Last error: dial tcp 10.96.190.254:27017: connect: connection refused }, ] }"
+vagrant@ubuntu-focal:/home/WORKSPACE/container-assessment$

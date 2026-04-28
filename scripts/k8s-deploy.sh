@@ -20,6 +20,7 @@ sudo kubectl apply -f kubernetes/mongodb/mongodb-configmap.yaml
 sudo kubectl apply -f kubernetes/mongodb/mongodb-pvc.yaml
 sudo kubectl apply -f kubernetes/mongodb/mongodb-deployment.yaml
 sudo kubectl apply -f kubernetes/mongodb/mongodb-service.yaml
+sudo kubectl apply -f kubernetes/redis.yaml
 
 # Backend resources
 sudo kubectl apply -f kubernetes/backend/backend-secret.yaml
