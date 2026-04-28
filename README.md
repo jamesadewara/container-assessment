@@ -108,7 +108,7 @@ sudo docker compose down
 ### 1. Create Kind Cluster
 
 ```bash
-kind create cluster --name muchtodo
+sudo kind create cluster --name muchtodo
 ```
 
 ### 2. Build and Load Image into Kind
@@ -117,36 +117,36 @@ Kind clusters run inside Docker and cannot see images built on your host directl
 
 ```bash
 # Build the image
-./scripts/docker-build.sh
+sudo ./scripts/docker-build.sh
 
 # Load it into the Kind cluster
-kind load docker-image muchtodo-backend:latest --name muchtodo
+sudo kind load docker-image muchtodo-backend:latest --name muchtodo
 ```
 
 ### 3. Deploy All Resources
 
 ```bash
-chmod +x scripts/k8s-deploy.sh
-./scripts/k8s-deploy.sh
+sudo chmod +x scripts/k8s-deploy.sh
+sudo ./scripts/k8s-deploy.sh
 ```
 
 ### 4. Verify Deployment
 
 ```bash
 # View all resources in the namespace
-kubectl get all -n muchtodo
+sudo kubectl get all -n muchtodo
 
 # Check pod status
-kubectl get pods -n muchtodo
+sudo kubectl get pods -n muchtodo
 
 # Describe a pod for troubleshooting
-kubectl describe pod <pod-name> -n muchtodo
+sudo kubectl describe pod <pod-name> -n muchtodo
 
 # View backend logs
-kubectl logs -f deployment/backend -n muchtodo
+sudo kubectl logs -f deployment/backend -n muchtodo
 
 # View MongoDB logs
-kubectl logs -f deployment/mongodb -n muchtodo
+sudo kubectl logs -f deployment/mongodb -n muchtodo
 ```
 
 ### 5. Access the Application
