@@ -20,8 +20,10 @@ RUN go mod download
 COPY MuchToDo/ .
 
 # Build the binary: static binary for Linux, no CGO
-# -ldflags="-w -s" strips debug info to make binary smaller
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o much-to-do ./cmd/api/main.go
+# Using BuildKit cache mounts to speed up compilation
+RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    CGO_ENABLED=0 GOOS=linux go build -v -ldflags="-w -s" -o much-to-do ./cmd/api/main.go
 
 # ============================================
 # STAGE 2: Create the runtime image with shell
@@ -35,8 +37,9 @@ WORKDIR /app
 # Copy the compiled binary from the builder stage
 COPY --from=builder /app/much-to-do .
 
-# Copy swagger docs if your app serves them
-COPY --from=builder /app/docs ./docs
+# Copy swagger docs only if they exist in the builder stage
+# This prevents build failure if docs were not generated
+RUN if [ -d "/app/docs" ]; then cp -r /app/docs ./docs; fi
 
 # Create non-root user (security best practice)
 RUN adduser -D -u 65532 appuser
