@@ -15,10 +15,10 @@ tidy:
 	go mod tidy
 
 dc-up:
-	docker-compose -f docker-compose.yaml up -d --build
+	sudo docker compose -f docker-compose.yaml up -d --build
 
 dc-restart:
-	docker-compose -f docker-compose.yaml restart
+	sudo docker compose -f docker-compose.yaml restart
 
 # confirm-rs:
 # # 	docker exec -it mongodb mongosh -u ${MONGO_INITDB_ROOT_USERNAME} -p ${MONGO_INITDB_ROOT_PASSWORD} --authenticationDatabase admin --eval "rs.status()"
@@ -30,15 +30,15 @@ dc-restart:
 # 	docker exec -it mongodb mongosh --u ${MONGO_INITDB_ROOT_USERNAME} -p ${MONGO_INITDB_ROOT_PASSWORD} --authenticationDatabase admin --eval "rs.status()"
 
 dc-down:
-	docker-compose -f docker-compose.yaml down
+	sudo docker compose -f docker-compose.yaml down
 
 generate-docs:
-	swag init -g ./cmd/api/main.go -o ./docs
+	sudo swag init -g ./cmd/api/main.go -o ./docs
 
 unit-test:
-	go test -v ./...
+	sudo go test -v ./...
 
 integration-test:
-	go test -tags=integration -v ./...
+	sudo go test -tags=integration -v ./...
 
 .PHONY: run build clean tidy dc-up dc-down generate-docs unit-test integration-test
