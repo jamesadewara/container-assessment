@@ -33,7 +33,7 @@ dc-down:
 	sudo docker compose -f docker-compose.yaml down
 
 generate-docs:
-	sudo swag init -g ./cmd/api/main.go -o ./docs
+	swag init -g ./cmd/api/main.go -o ./docs # i used sudo snap install swag --classic
 
 unit-test:
 	sudo go test -v ./...
