@@ -73,7 +73,7 @@ kubectl get all -n muchtodo
 sudo kubectl get deployments -n muchtodo
 
 # Check Pod status (to see if they are Running)
-sudo kubectl get pods -n muchtodo
+sudo kubectl get pod,svc,ing,deploy -n muchtodo
 
 # Test via NodePort
 curl http://localhost:30080/health
